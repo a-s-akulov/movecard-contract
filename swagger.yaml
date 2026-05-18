@@ -1,718 +1,324 @@
----
-swagger: "2.0"
+openapi: '3.1.1'
 info:
-  description: "This is a sample server Petstore server.  You can find out more about\
-    \ Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).\
-    \  For this sample, you can use the api key `special-key` to test the authorization\
-    \ filters."
-  version: "1.0.5"
-  title: "Swagger Petstore"
-  termsOfService: "http://swagger.io/terms/"
-  contact:
-    email: "apiteam@swagger.io"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "petstore.swagger.io"
-basePath: "/v2"
-tags:
-- name: "pet"
-  description: "Everything about your Pets"
-  externalDocs:
-    description: "Find out more"
-    url: "http://swagger.io"
-- name: "store"
-  description: "Access to Petstore orders"
-- name: "user"
-  description: "Operations about user"
-  externalDocs:
-    description: "Find out more about our store"
-    url: "http://swagger.io"
-schemes:
-- "https"
-- "http"
+  title: DemoTemplateServices.Api | v1
+  version: 1.0.0
+servers:
+  - url: http://localhost:52152/
 paths:
-  /pet/{petId}/uploadImage:
-    post:
-      tags:
-      - "pet"
-      summary: "uploads an image"
-      description: ""
-      operationId: "uploadFile"
-      consumes:
-      - "multipart/form-data"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to update"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "additionalMetadata"
-        in: "formData"
-        description: "Additional data to pass to server"
-        required: false
-        type: "string"
-      - name: "file"
-        in: "formData"
-        description: "file to upload"
-        required: false
-        type: "file"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/ApiResponse"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet:
-    post:
-      tags:
-      - "pet"
-      summary: "Add a new pet to the store"
-      description: ""
-      operationId: "addPet"
-      consumes:
-      - "application/json"
-      - "application/xml"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
-        required: true
-        schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        405:
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    put:
-      tags:
-      - "pet"
-      summary: "Update an existing pet"
-      description: ""
-      operationId: "updatePet"
-      consumes:
-      - "application/json"
-      - "application/xml"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
-        required: true
-        schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-        405:
-          description: "Validation exception"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByStatus:
+  '/api/v1/products/{productId}/move-card/operations':
     get:
       tags:
-      - "pet"
-      summary: "Finds Pets by status"
-      description: "Multiple status values can be provided with comma separated strings"
-      operationId: "findPetsByStatus"
-      produces:
-      - "application/json"
-      - "application/xml"
+        - Карточка движения товара (КДТ) - операции
+      summary: Получить операции карточки движения товара
       parameters:
-      - name: "status"
-        in: "query"
-        description: "Status values that need to be considered for filter"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-          enum:
-          - "available"
-          - "pending"
-          - "sold"
-          default: "available"
-        collectionFormat: "multi"
-      responses:
-        200:
-          description: "successful operation"
+        - name: productId
+          in: path
+          description: "Идентификатор товарной позиции (BookId)\r\n<br />Пример: 3136715 - Классика в комиксах: Пушкин. Капитанская дочка"
+          required: true
           schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid status value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByTags:
-    get:
-      tags:
-      - "pet"
-      summary: "Finds Pets by tags"
-      description: "Multiple tags can be provided with comma separated strings. Use\
-        \ tag1, tag2, tag3 for testing."
-      operationId: "findPetsByTags"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "tags"
-        in: "query"
-        description: "Tags to filter by"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-        collectionFormat: "multi"
-      responses:
-        200:
-          description: "successful operation"
+            maximum: 2147483647
+            minimum: 1
+            type: integer
+            format: int32
+          example: 3136715
+        - name: partnerId
+          in: query
+          description: "Идентификатор магазина (код ОРС)\r\n<br />Пример: 469 - Братиславская 2"
+          required: true
           schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid tag value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-      deprecated: true
-  /pet/{petId}:
-    get:
-      tags:
-      - "pet"
-      summary: "Find pet by ID"
-      description: "Returns a single pet"
-      operationId: "getPetById"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to return"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
+            maximum: 2147483647
+            minimum: 1
+            type: integer
+            format: int32
+          example: 469
+        - name: 'filters[documentCalculatedFromAt]'
+          in: query
+          description: "Дата расчёта документа (основная дата проведения операции) - минимальный порог (включительно)\r\n<br />Если не указан - минимальный порог отсутствует"
           schema:
-            $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-      security:
-      - api_key: []
-    post:
-      tags:
-      - "pet"
-      summary: "Updates a pet in the store with form data"
-      description: ""
-      operationId: "updatePetWithForm"
-      consumes:
-      - "application/x-www-form-urlencoded"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet that needs to be updated"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "name"
-        in: "formData"
-        description: "Updated name of the pet"
-        required: false
-        type: "string"
-      - name: "status"
-        in: "formData"
-        description: "Updated status of the pet"
-        required: false
-        type: "string"
-      responses:
-        405:
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    delete:
-      tags:
-      - "pet"
-      summary: "Deletes a pet"
-      description: ""
-      operationId: "deletePet"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "api_key"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "petId"
-        in: "path"
-        description: "Pet id to delete"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /store/order:
-    post:
-      tags:
-      - "store"
-      summary: "Place an order for a pet"
-      description: ""
-      operationId: "placeOrder"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "order placed for purchasing the pet"
-        required: true
-        schema:
-          $ref: "#/definitions/Order"
-      responses:
-        200:
-          description: "successful operation"
+            type: string
+            format: date-time
+            example: '2026-05-01T12:00:00.000Z'
+          example: '2026-05-01T12:00:00.000Z'
+        - name: 'filters[documentCalculatedToAt]'
+          in: query
+          description: "Дата расчёта документа (основная дата проведения операции) - максимальный порог (включительно)\r\n<br />Если не указан - максимальный порог отсутствует"
           schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid Order"
-  /store/order/{orderId}:
-    get:
-      tags:
-      - "store"
-      summary: "Find purchase order by ID"
-      description: "For valid response try integer IDs with value >= 1 and <= 10.\
-        \ Other values will generated exceptions"
-      operationId: "getOrderById"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "orderId"
-        in: "path"
-        description: "ID of pet that needs to be fetched"
-        required: true
-        type: "integer"
-        maximum: 10
-        minimum: 1
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
+            type: string
+            format: date-time
+            example: '2026-05-31T12:00:00.000Z'
+          example: '2026-05-31T12:00:00.000Z'
+        - name: sort
+          in: query
+          description: "Параметр сортировки\r\n<br />Если не указан, то будет использована сортировка по умолчанию (\"documentCreatedAtDesc\")<p>Варианты:</p><ul><li><i>documentCalculatedAt</i> - Дата расчёта документа (основная дата проведения операции) (от старых к новым)</li><li><i>documentCalculatedAtDesc</i> - Дата расчёта документа (основная дата проведения операции) (от новых к старым)</li></ul>"
           schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Order not found"
-    delete:
-      tags:
-      - "store"
-      summary: "Delete purchase order by ID"
-      description: "For valid response try integer IDs with positive integer value.\
-        \ Negative or non-integer values will generate API errors"
-      operationId: "deleteOrder"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "orderId"
-        in: "path"
-        description: "ID of the order that needs to be deleted"
-        required: true
-        type: "integer"
-        minimum: 1
-        format: "int64"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Order not found"
-  /store/inventory:
-    get:
-      tags:
-      - "store"
-      summary: "Returns pet inventories by status"
-      description: "Returns a map of status codes to quantities"
-      operationId: "getInventory"
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        200:
-          description: "successful operation"
+            $ref: '#/components/schemas/FetchProductOperationsSort'
+        - name: 'page[number]'
+          in: query
+          description: "Номер запрашиваемой страницы\r\n<br />Если не указан - будет возвращена первая страница (номер 1)\r\n<br />\r\n[https://jsonapi.org/format/#fetching-pagination](https://jsonapi.org/format/#fetching-pagination)"
           schema:
-            type: "object"
-            additionalProperties:
-              type: "integer"
-              format: "int32"
-      security:
-      - api_key: []
-  /user/createWithArray:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithArrayInput"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
+            maximum: 2147483647
+            minimum: 1
+            type: integer
+            format: int32
+            example: 1
+          example: 1
+        - name: 'page[size]'
+          in: query
+          description: "Количество элементов на одной странице ответа\r\n<br />Если не указано - используется значение по умолчанию в зависимости от запрашиваемого метода\r\n<br />\r\n[https://jsonapi.org/format/#fetching-pagination](https://jsonapi.org/format/#fetching-pagination)"
+          schema:
+            maximum: 2147483647
+            minimum: 1
+            type: integer
+            format: int32
+            example: 100
+          example: 100
+      responses:
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IApiErrorResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IApiErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IApiErrorResponse'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IApiSimpleCollectionResponseOfGetProductOperationsResponseData'
+components:
+  schemas:
+    ApiResource:
+      required:
+        - type
+        - id
+      type: object
+      properties:
+        type:
+          type: string
+          description: "Тип ресурса\r\n<br />\r\n[https://jsonapi.org/format/#document-resource-identifier-objects](https://jsonapi.org/format/#document-resource-identifier-objects)"
+        id:
+          type: string
+          description: "Идентификатор ресурса\r\n<br />\r\n[https://jsonapi.org/format/#document-resource-identifier-objects](https://jsonapi.org/format/#document-resource-identifier-objects)"
+      additionalProperties: false
+    ApiResponseError:
+      required:
+        - code
+        - title
+        - id
+        - status
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Уникальный идентификатор для данного конкретного случая возникновения проблемы\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+          format: uuid
+        status:
+          type: string
+          description: "Код состояния HTTP, относящийся к данной проблеме.\r\n<br />\n            Выражается в виде строкового значения.\r\n<br />\n            Этот код ДОЛЖЕН быть предоставлен.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+        code:
+          type: string
+          description: "Код ошибки, специфичный для приложения.\r\n<br />\n            Выражается в виде строкового значения.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+        title:
+          type: string
+          description: "Краткое, понятное человеку описание проблемы.\r\n<br />\n            НЕ ДОЛЖНО меняться от случая к случаю для неё\r\n<br />\n            (за исключением случаев локализации)\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+        detail:
+          type:
+            - 'null'
+            - string
+          description: "Понятное человеку описание проблемы, специфичное для данного случая.\r\n<br />\n            Как и\r\nTitle, может быть локализовано.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+        source:
+          oneOf:
+            - type: 'null'
+            - $ref: '#/components/schemas/ApiResponseErrorSource'
+      additionalProperties: false
+    ApiResponseErrorSource:
+      type: object
+      properties:
+        pointer:
+          type:
+            - 'null'
+            - string
+          description: "Указатель JSON [\r\n[RFC6901](https://datatracker.ietf.org/doc/html/rfc6901)] на значение в документе запроса, вызвавшее ошибку.\r\n<br />\n            [например, \"/data\" для основного объекта данных или \"/data/attributes/title\" для конкретного атрибута]\r\n<br />\n            Этот указатель ДОЛЖЕН указывать на существующее значение в документе запроса;\r\n<br />\n            Если его нет, клиент ДОЛЖЕН просто игнорировать указатель.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+        parameter:
+          type:
+            - 'null'
+            - string
+          description: "Строка, указывающая, какой параметр запроса URI вызвал ошибку\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+        header:
+          type:
+            - 'null'
+            - string
+          description: "Строка, указывающая имя заголовка запроса, вызвавшего ошибку\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+      additionalProperties: false
+      description: "Источник ошибки API\r\n<br />\n            Объект, содержащий ссылки на основной источник ошибки.\r\n<br />\n            Он ДОЛЖЕН включать один из следующих членов или быть опущен\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+    ApiResponsePagination:
+      required:
+        - size
+        - number
+        - total
+        - count
+        - totalPages
+      type: object
+      properties:
+        size:
+          type: integer
+          description: Количество результатов на одну страницу
+          format: int32
+          example: 100
+        number:
+          type: integer
+          description: Номер Текущей страницы результатов
+          format: int32
+          example: 1
+        total:
+          type: integer
+          description: Всего найдено результатов поиска
+          format: int32
+          example: 1
+        count:
+          type: integer
+          description: Количество результатов на текущей странице
+          format: int32
+          example: 1
+        totalPages:
+          type: integer
+          description: Всего страниц результатов
+          format: int32
+          example: 1
+      additionalProperties: false
+    ApiSimpleCollectionResourceOfGetProductOperationsResponseData:
+      allOf:
+        - $ref: '#/components/schemas/ApiSimpleResourceOfGetProductOperationsResponseData'
+        - { }
+      additionalProperties: false
+      description: Данные ответа
+    ApiSimpleResourceOfGetProductOperationsResponseData:
+      allOf:
+        - $ref: '#/components/schemas/ApiResource'
+        - required:
+            - attributes
+          type: object
+          properties:
+            attributes:
+              $ref: '#/components/schemas/GetProductOperationsResponseData'
+    FetchProductOperationsSort:
+      enum:
+        - documentCalculatedAt
+        - documentCalculatedAtDesc
+      description: <p>Варианты:</p><ul><li><i>documentCalculatedAt</i> - Дата расчёта документа (основная дата проведения операции) (от старых к новым)</li><li><i>documentCalculatedAtDesc</i> - Дата расчёта документа (основная дата проведения операции) (от новых к старым)</li></ul>
+    GetProductOperationsResponseData:
+      required:
+        - productId
+        - partnerId
+        - quantityInTransit
+        - operations
+      type: object
+      properties:
+        productId:
+          type: integer
+          description: "Идентификатор товарной позиции (ProductId)\r\n<br />Пример: 3136715 - Классика в комиксах: Пушкин. Капитанская дочка"
+          format: int32
+          example: 3136715
+        partnerId:
+          type: integer
+          description: "Идентификатор магазина (код ОРС)\r\n<br />Пример: 469 - Братиславская 2"
+          format: int32
+          example: 469
+        quantityInTransit:
+          type: integer
+          description: Количество экземпляров этого товара на пути в указанный магазин на момент этой операции
+          format: int32
+          example: 1
+        operations:
+          type: array
           items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/createWithList:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithListInput"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
+            $ref: '#/components/schemas/ProductMoveCardOperation'
+          description: Операции движения по товару
+      additionalProperties: false
+      description: "Атрибуты ресурса\r\n<br />\r\n[https://jsonapi.org/format/#document-resource-object-attributes](https://jsonapi.org/format/#document-resource-object-attributes)"
+    IApiCollectionResponseMeta:
+      required:
+        - pagination
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/ApiResponsePagination'
+      additionalProperties: false
+      description: Мета-информация ответа на запрос к API
+    IApiErrorResponse:
+      type: object
+      properties:
+        errors:
+          type:
+            - 'null'
+            - array
           items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/{username}:
-    get:
-      tags:
-      - "user"
-      summary: "Get user by user name"
-      description: ""
-      operationId: "getUserByName"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/User"
-        400:
-          description: "Invalid username supplied"
-        404:
-          description: "User not found"
-    put:
-      tags:
-      - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "name that need to be updated"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-      responses:
-        400:
-          description: "Invalid user supplied"
-        404:
-          description: "User not found"
-    delete:
-      tags:
-      - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be deleted"
-        required: true
-        type: "string"
-      responses:
-        400:
-          description: "Invalid username supplied"
-        404:
-          description: "User not found"
-  /user/login:
-    get:
-      tags:
-      - "user"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
-        required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          headers:
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-          schema:
-            type: "string"
-        400:
-          description: "Invalid username/password supplied"
-  /user/logout:
-    get:
-      tags:
-      - "user"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logoutUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters: []
-      responses:
-        default:
-          description: "successful operation"
-  /user:
-    post:
-      tags:
-      - "user"
-      summary: "Create user"
-      description: "This can only be done by the logged in user."
-      operationId: "createUser"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Created user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-securityDefinitions:
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "https://petstore.swagger.io/oauth/authorize"
-    flow: "implicit"
-    scopes:
-      read:pets: "read your pets"
-      write:pets: "modify pets in your account"
-definitions:
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
-  Category:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Category"
-  Pet:
-    type: "object"
-    required:
-    - "name"
-    - "photoUrls"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      category:
-        $ref: "#/definitions/Category"
-      name:
-        type: "string"
-        example: "doggie"
-      photoUrls:
-        type: "array"
-        xml:
-          wrapped: true
-        items:
-          type: "string"
-          xml:
-            name: "photoUrl"
-      tags:
-        type: "array"
-        xml:
-          wrapped: true
-        items:
-          xml:
-            name: "tag"
-          $ref: "#/definitions/Tag"
-      status:
-        type: "string"
-        description: "pet status in the store"
-        enum:
-        - "available"
-        - "pending"
-        - "sold"
-    xml:
-      name: "Pet"
-  Tag:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Tag"
-  Order:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      petId:
-        type: "integer"
-        format: "int64"
-      quantity:
-        type: "integer"
-        format: "int32"
-      shipDate:
-        type: "string"
-        format: "date-time"
-      status:
-        type: "string"
-        description: "Order Status"
-        enum:
-        - "placed"
-        - "approved"
-        - "delivered"
-      complete:
-        type: "boolean"
-    xml:
-      name: "Order"
-  User:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      username:
-        type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+            $ref: '#/components/schemas/ApiResponseError'
+          description: "Ошибки, возникшие в результате  обработки запроса\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
+      additionalProperties: false
+    IApiSimpleCollectionResponseOfGetProductOperationsResponseData:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ApiSimpleCollectionResourceOfGetProductOperationsResponseData'
+        meta:
+          $ref: '#/components/schemas/IApiCollectionResponseMeta'
+      additionalProperties: false
+    ProductMoveCardOperation:
+      required:
+        - documentId
+        - documentTypeId
+        - documentTypeName
+        - documentCalculatedAt
+        - quantity
+        - totalQuantityInShopAfterOperation
+        - productInOperationPrice
+      type: object
+      properties:
+        documentId:
+          type: string
+          description: Идентификатор документа в системе 1С:УТ
+          example: 123456
+        documentTypeId:
+          type: string
+          description: Идентификатор типа документа
+          example: 3
+        documentTypeName:
+          type: string
+          description: Название типа документа
+          example: Сокращение
+        documentCalculatedAt:
+          type: string
+          description: Дата расчёта документа (основная дата проведения операции)
+          format: date-time
+          example: '2026-05-15T12:00:00.000Z'
+        quantity:
+          type: integer
+          description: 'Количество товара по документу (приход «+», расход «-»)'
+          format: int32
+          example: -3
+        totalQuantityInShopAfterOperation:
+          type: integer
+          description: Количество товара на остатках магазина после выполнения операции
+          format: int32
+          example: 27
+        productInOperationPrice:
+          type: number
+          description: Цена товара для конкретно этой операции
+          format: double
+          example: 1533.0000
+      additionalProperties: false
+tags:
+  - name: Карточка движения товара (КДТ) - операции
