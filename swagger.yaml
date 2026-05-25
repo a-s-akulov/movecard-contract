@@ -31,17 +31,17 @@ paths:
             type: integer
             format: int32
           example: 469
-        - name: 'filters[documentCalculatedFromAt]'
+        - name: 'filters[documentIssuedFromAt]'
           in: query
-          description: "Дата расчёта документа (основная дата проведения операции) - минимальный порог (включительно)\r\n<br />Если не указан - минимальный порог отсутствует"
+          description: "Дата выпуска документа (основная дата проведения операции) - минимальный порог (включительно)\r\n<br />Если не указан - минимальный порог отсутствует"
           schema:
             type: string
             format: date-time
             example: '2026-05-01T12:00:00.000Z'
           example: '2026-05-01T12:00:00.000Z'
-        - name: 'filters[documentCalculatedToAt]'
+        - name: 'filters[documentIssuedToAt]'
           in: query
-          description: "Дата расчёта документа (основная дата проведения операции) - максимальный порог (включительно)\r\n<br />Если не указан - максимальный порог отсутствует"
+          description: "Дата выпуска документа (основная дата проведения операции) - максимальный порог (включительно)\r\n<br />Если не указан - максимальный порог отсутствует"
           schema:
             type: string
             format: date-time
@@ -49,7 +49,7 @@ paths:
           example: '2026-05-31T12:00:00.000Z'
         - name: sort
           in: query
-          description: "Параметр сортировки\r\n<br />Если не указан, то будет использована сортировка по умолчанию (\"documentCreatedAtDesc\")<p>Варианты:</p><ul><li><i>documentCalculatedAt</i> - Дата расчёта документа (основная дата проведения операции) (от старых к новым)</li><li><i>documentCalculatedAtDesc</i> - Дата расчёта документа (основная дата проведения операции) (от новых к старым)</li></ul>"
+          description: "Параметр сортировки\r\n<br />Если не указан, то будет использована сортировка по умолчанию (\"documentCreatedAtDesc\")<p>Варианты:</p><ul><li><i>documentIssuedAt</i> - Дата выпуска документа (основная дата проведения операции) (от старых к новым)</li><li><i>documentIssuedAtDesc</i> - Дата выпуска документа (основная дата проведения операции) (от новых к старым)</li></ul>"
           schema:
             $ref: '#/components/schemas/FetchProductOperationsSort'
         - name: 'page[number]'
@@ -73,30 +73,32 @@ paths:
             example: 100
           example: 100
       responses:
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IApiErrorResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IApiErrorResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IApiErrorResponse'
         '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/IApiSimpleCollectionResponseOfGetProductOperationsResponseData'
+        '400':
+          description: 'Не переданы обязательные параметры, либо параметры переданы, но в некорректном формате'
+          content:
+            application/json: { }
+        '401':
+          description: Ошибка авторизации
+          content:
+            application/json: { }
+        '404':
+          description: Сервис недоступен
+          content:
+            application/json: { }
+        '423':
+          description: Интеграция с РМ выключена в настройках программы на стороне 1С:УТ
+          content:
+            application/json: { }
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json: { }
 components:
   schemas:
     ApiResource:
@@ -112,57 +114,6 @@ components:
           type: string
           description: "Идентификатор ресурса\r\n<br />\r\n[https://jsonapi.org/format/#document-resource-identifier-objects](https://jsonapi.org/format/#document-resource-identifier-objects)"
       additionalProperties: false
-    ApiResponseError:
-      required:
-        - code
-        - title
-        - id
-        - status
-      type: object
-      properties:
-        id:
-          type: string
-          description: "Уникальный идентификатор для данного конкретного случая возникновения проблемы\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-          format: uuid
-        status:
-          type: string
-          description: "Код состояния HTTP, относящийся к данной проблеме.\r\n<br />\n            Выражается в виде строкового значения.\r\n<br />\n            Этот код ДОЛЖЕН быть предоставлен.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-        code:
-          type: string
-          description: "Код ошибки, специфичный для приложения.\r\n<br />\n            Выражается в виде строкового значения.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-        title:
-          type: string
-          description: "Краткое, понятное человеку описание проблемы.\r\n<br />\n            НЕ ДОЛЖНО меняться от случая к случаю для неё\r\n<br />\n            (за исключением случаев локализации)\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-        detail:
-          type:
-            - 'null'
-            - string
-          description: "Понятное человеку описание проблемы, специфичное для данного случая.\r\n<br />\n            Как и\r\nTitle, может быть локализовано.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-        source:
-          oneOf:
-            - type: 'null'
-            - $ref: '#/components/schemas/ApiResponseErrorSource'
-      additionalProperties: false
-    ApiResponseErrorSource:
-      type: object
-      properties:
-        pointer:
-          type:
-            - 'null'
-            - string
-          description: "Указатель JSON [\r\n[RFC6901](https://datatracker.ietf.org/doc/html/rfc6901)] на значение в документе запроса, вызвавшее ошибку.\r\n<br />\n            [например, \"/data\" для основного объекта данных или \"/data/attributes/title\" для конкретного атрибута]\r\n<br />\n            Этот указатель ДОЛЖЕН указывать на существующее значение в документе запроса;\r\n<br />\n            Если его нет, клиент ДОЛЖЕН просто игнорировать указатель.\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-        parameter:
-          type:
-            - 'null'
-            - string
-          description: "Строка, указывающая, какой параметр запроса URI вызвал ошибку\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-        header:
-          type:
-            - 'null'
-            - string
-          description: "Строка, указывающая имя заголовка запроса, вызвавшего ошибку\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-      additionalProperties: false
-      description: "Источник ошибки API\r\n<br />\n            Объект, содержащий ссылки на основной источник ошибки.\r\n<br />\n            Он ДОЛЖЕН включать один из следующих членов или быть опущен\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
     ApiResponsePagination:
       required:
         - size
@@ -215,9 +166,9 @@ components:
               $ref: '#/components/schemas/GetProductOperationsResponseData'
     FetchProductOperationsSort:
       enum:
-        - documentCalculatedAt
-        - documentCalculatedAtDesc
-      description: <p>Варианты:</p><ul><li><i>documentCalculatedAt</i> - Дата расчёта документа (основная дата проведения операции) (от старых к новым)</li><li><i>documentCalculatedAtDesc</i> - Дата расчёта документа (основная дата проведения операции) (от новых к старым)</li></ul>
+        - documentIssuedAt
+        - documentIssuedAtDesc
+        - 
     GetProductOperationsResponseData:
       required:
         - productId
@@ -238,7 +189,7 @@ components:
           example: 469
         quantityInTransit:
           type: integer
-          description: Количество экземпляров этого товара на пути в указанный магазин на момент этой операции
+          description: Количество экземпляров этого товара на пути в указанный магазин на текущий момент (момент выполнения запроса)
           format: int32
           example: 1
         operations:
@@ -257,17 +208,6 @@ components:
           $ref: '#/components/schemas/ApiResponsePagination'
       additionalProperties: false
       description: Мета-информация ответа на запрос к API
-    IApiErrorResponse:
-      type: object
-      properties:
-        errors:
-          type:
-            - 'null'
-            - array
-          items:
-            $ref: '#/components/schemas/ApiResponseError'
-          description: "Ошибки, возникшие в результате  обработки запроса\r\n<br />\r\n[https://jsonapi.org/format/#error-objects](https://jsonapi.org/format/#error-objects)"
-      additionalProperties: false
     IApiSimpleCollectionResponseOfGetProductOperationsResponseData:
       type: object
       properties:
@@ -281,7 +221,7 @@ components:
         - documentId
         - documentTypeId
         - documentTypeName
-        - documentCalculatedAt
+        - documentIssuedAt
         - quantity
         - totalQuantityInShopAfterOperation
         - productInOperationPrice
@@ -299,9 +239,9 @@ components:
           type: string
           description: Название типа документа
           example: Сокращение
-        documentCalculatedAt:
+        documentIssuedAt:
           type: string
-          description: Дата расчёта документа (основная дата проведения операции)
+          description: Дата выпуска документа (основная дата проведения операции)
           format: date-time
           example: '2026-05-15T12:00:00.000Z'
         quantity:
