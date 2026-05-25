@@ -83,7 +83,8 @@ paths:
           description: 'Не переданы обязательные параметры, либо параметры переданы, но в некорректном формате'
           content:
             application/json:
-              schema: { }
+              schema:
+                $ref: '#/components/schemas/ErrorCode400'
         '401':
           description: Ошибка авторизации
           content:
@@ -98,7 +99,8 @@ paths:
           description: Интеграция с РМ выключена в настройках программы на стороне 1С:УТ
           content:
             application/json:
-              schema: { }
+              schema:
+                $ref: '#/components/schemas/ErrorCode423'
         '500':
           description: Внутренняя ошибка сервера
           content:
@@ -169,6 +171,50 @@ components:
           properties:
             attributes:
               $ref: '#/components/schemas/GetProductOperationsResponseData'
+    ErrorCode400:
+      required:
+        - title
+        - detail
+        - status
+        - url
+      type: object
+      properties:
+        title:
+          type: string
+          example: Bad Request
+        detail:
+          type: string
+          example: 'Отсутствуют обязательные параметры: productId и partnerId'
+        status:
+          type: integer
+          format: int32
+          example: 400
+        url:
+          type: string
+          example: 'http://{АдресСервера}/{ИмяБазыДанных}/hs/RM/{ИмяМетода}'
+      additionalProperties: false
+    ErrorCode423:
+      required:
+        - title
+        - detail
+        - status
+        - url
+      type: object
+      properties:
+        title:
+          type: string
+          example: Locked
+        detail:
+          type: string
+          example: Использование интеграции с РМ отключено в настройках программы.
+        status:
+          type: integer
+          format: int32
+          example: 423
+        url:
+          type: string
+          example: 'http://{АдресСервера}/{ИмяБазыДанных}/hs/RM/{ИмяМетода}'
+      additionalProperties: false
     FetchProductOperationsSort:
       enum:
         - documentIssuedAt
@@ -229,7 +275,6 @@ components:
         - documentIssuedAt
         - quantity
         - totalQuantityInShopAfterOperation
-        - productInOperationPrice
       type: object
       properties:
         documentId:
@@ -259,11 +304,6 @@ components:
           description: Количество товара на остатках магазина после выполнения операции
           format: int32
           example: 27
-        productInOperationPrice:
-          type: number
-          description: Цена товара для конкретно этой операции
-          format: double
-          example: 1533.0000
       additionalProperties: false
 tags:
   - name: Карточка движения товара (КДТ) - операции
