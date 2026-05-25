@@ -82,23 +82,28 @@ paths:
         '400':
           description: 'Не переданы обязательные параметры, либо параметры переданы, но в некорректном формате'
           content:
-            application/json: { }
+            application/json:
+              schema: { }
         '401':
           description: Ошибка авторизации
           content:
-            application/json: { }
+            application/json:
+              schema: { }
         '404':
           description: Сервис недоступен
           content:
-            application/json: { }
+            application/json:
+              schema: { }
         '423':
           description: Интеграция с РМ выключена в настройках программы на стороне 1С:УТ
           content:
-            application/json: { }
+            application/json:
+              schema: { }
         '500':
           description: Внутренняя ошибка сервера
           content:
-            application/json: { }
+            application/json:
+              schema: { }
 components:
   schemas:
     ApiResource:
