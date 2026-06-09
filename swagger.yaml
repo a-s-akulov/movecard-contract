@@ -21,7 +21,7 @@ paths:
             type: integer
             format: int32
           example: 3136715
-        - name: partnerId
+        - name: 'filters[partnerId]'
           in: query
           description: "Идентификатор магазина (код ОРС)\r\n<br />Пример: 469 - Братиславская 2"
           required: true
